@@ -1,22 +1,22 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "pdns.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
-    app: {{ template "pdns.name" . }}
-    chart: {{ template "pdns.chart" . }}
+    app: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "pdns.name" . }}
+      app: {{ .Chart.Name }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "pdns.name" . }}
+        app: {{ .Release.Name }}
         release: {{ .Release.Name }}
     spec:
       containers:
