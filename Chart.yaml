@@ -3,4 +3,10 @@ appVersion: "1.0"
 description: Helm chart to deploy PowerDNS recursor to Kubernetes
 name: pdns-recursor-helm
 version: 0.0.1
-
+home: https://www.powerdns.com/
+sources:
+- https://github.com/yeyus/pdns-recursor-helm
+maintainers:
+- name: Jesus Trujillo
+  email: elyeyus@gmail.com
+engine: gotpl

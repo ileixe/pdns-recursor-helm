@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "pdns.fullname" . }}
+  name: {{ template "fullname" . }}
   labels:
-    app: {{ template "pdns.name" . }}
-    chart: {{ template "pdns.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
 data:
-  {{ .Files.Get "recursor.conf" }}
+  recursor.conf: |
+{{ .Files.Get "static/recursor.conf" | printf "%s" | indent 4 }}
