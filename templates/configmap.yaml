@@ -8,5 +8,6 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 data:
-  recursor.conf: |
-{{ .Files.Get "static/recursor.conf" | printf "%s" | indent 4 }}
+  recursor.conf: |-
+{{ .Values.pdns.config | indent 4 }}
+

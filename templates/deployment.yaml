@@ -31,11 +31,11 @@ spec:
               value: {{ template "mariadb.fullname" . }}
             - name: MYSQL_USER
               value: "root"
-              value: {{ .Values.mariadb.mariadbUser | quote }}
+              value: {{ .Values.mariadb.db.user | quote }}
             - name: MYSQL_PASS
-              value: {{ .Values.mariadb.mariadbPassword | quote }}
+              value: {{ .Values.mariadb.db.password | quote }}
             - name: MYSQL_DB
-              value: {{ .Values.mariadb.mariadbDatabase | quote }}
+              value: {{ .Values.mariadb.db.name | quote }}
           ports:
             - name: dns-udp
               containerPort: 53

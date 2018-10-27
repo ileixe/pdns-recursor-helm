@@ -4,12 +4,19 @@
 
 pdns:
     api:
-        enabled: yes
-        key: PowerDNSAPI
+      enabled: yes
+      key: PowerDNSAPI
     webserver:
-        allowFrom: 0.0.0.0/0
+      allowFrom: 0.0.0.0/0
     dnsupdate:
-        enabled: no
+      enabled: no
+    config: |-
+      daemon=no
+      local-address=0.0.0.0
+      local-port=53
+      allow-from=0.0.0.0/0
+      setgid=recursor
+      setuid=recursor
 
 replicaCount: 1
 
@@ -61,25 +68,13 @@ mariadb:
   ## Azure Database for MySQL, set this to true.
   enabled: true
 
-  ## MariaDB admin password
-  ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#setting-the-root-password-on-first-run
-  ##
-  # mariadbRootPassword:
+  db:
+    name: powerdns
+    user: powerdns
+    password: powerdns
 
-  ## Create a database
-  ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#creating-a-database-on-first-run
-  ##
-  mariadbDatabase: powerdns
-
-  ## Create a database user
-  ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#creating-a-database-user-on-first-run
-  ##
-  mariadbUser: powerdns
-
-  ## Password for mariadbUser
-  ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#creating-a-database-user-on-first-run
-  ##
-  mariadbPassword: powerdns
+  replication:
+    enabled: false
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
