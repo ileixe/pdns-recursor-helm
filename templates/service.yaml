@@ -23,5 +23,5 @@ spec:
       protocol: TCP
       name: dns-tcp
   selector:
-    app: {{ .Release.Name }}
+    app: {{ template "fullname" . }}
     release: {{ .Release.Name }}

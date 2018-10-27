@@ -20,11 +20,15 @@ spec:
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: "{{ .Release.Name }}"
     spec:
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "fullname" . }}
       containers:
         - name: {{ template "fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-          command: ["/entrypoint.sh"]
+          command: ["/usr/sbin/pdns_recursor"]
           args: ["--api={{ .Values.pdns.api.enabled }}", "--api-key={{ .Values.pdns.api.key }}", "--webserver=yes", "--webserver-port=8081", "--webserver-address=0.0.0.0", "--webserver-allow-from={{ .Values.pdns.webserver.allowFrom }}", "--slave=yes", "--dnsupdate={{ .Values.pdns.dnsupdate.enabled }}"]
           env:
             - name: MYSQL_HOST
@@ -33,7 +37,10 @@ spec:
               value: "root"
               value: {{ .Values.mariadb.db.user | quote }}
             - name: MYSQL_PASS
-              value: {{ .Values.mariadb.db.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mariadb.fullname" . }}
+                  key: mariadb-password
             - name: MYSQL_DB
               value: {{ .Values.mariadb.db.name | quote }}
           ports:
@@ -46,6 +53,10 @@ spec:
             - name: api
               containerPort: 8081
               protocol: TCP
+          volumeMounts:
+          - name: config
+            mountPath: /etc/pdns/recursor.conf
+            subPath: recursor.conf
           livenessProbe:
             httpGet:
               path: /

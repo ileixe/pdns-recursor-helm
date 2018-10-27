@@ -17,6 +17,7 @@ pdns:
       allow-from=0.0.0.0/0
       setgid=recursor
       setuid=recursor
+      forward-zones=.=8.8.8.8
 
 replicaCount: 1
 
