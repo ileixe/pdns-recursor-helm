@@ -3,13 +3,11 @@
 # Declare variables to be passed into your templates.
 
 pdns:
-    api:
-      enabled: yes
-      key: PowerDNSAPI
+  api:
+    key: PowerDNSAPI
+  recursor:
     webserver:
       allowFrom: 0.0.0.0/0
-    dnsupdate:
-      enabled: no
     config: |-
       daemon=no
       local-address=0.0.0.0
@@ -17,7 +15,11 @@ pdns:
       allow-from=0.0.0.0/0
       setgid=recursor
       setuid=recursor
-      forward-zones=.=8.8.8.8
+      forward-zones-recurse=.=1.1.1.1;8.8.8.8
+      webserver=yes
+      webserver-port=8081
+      webserver-address=0.0.0.0
+      trace=yes
 
 replicaCount: 1
 
@@ -64,9 +66,6 @@ affinity: {}
 ## MariaDB chart configuration
 ##
 mariadb:
-  ## Whether to use the database specified as a requirement or not.
-  ## If you want to use a MariaDB database deployed to Kubernetes instead of
-  ## Azure Database for MySQL, set this to true.
   enabled: true
 
   db:
@@ -77,21 +76,9 @@ mariadb:
   replication:
     enabled: false
 
-  ## Enable persistence using Persistent Volume Claims
-  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
-  ##
-  ## Enable persistence using Persistent Volume Claims
-  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
-  ##
-  persistence:
-    enabled: false
-    ## mariadb data Persistent Volume Storage Class
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, AWS & OpenStack)
-    ##
-    # storageClass: "-"
-    accessMode: ReadWriteOnce
-    size: 2Gi
+  master:
+    persistence:
+      enabled: false
+      storageClass: "managed-nfs-storage"
+      accessModes: [ReadWriteOnce]
+      size: 2Gi

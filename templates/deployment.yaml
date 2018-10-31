@@ -29,7 +29,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           command: ["/usr/sbin/pdns_recursor"]
-          args: ["--api={{ .Values.pdns.api.enabled }}", "--api-key={{ .Values.pdns.api.key }}", "--webserver=yes", "--webserver-port=8081", "--webserver-address=0.0.0.0", "--webserver-allow-from={{ .Values.pdns.webserver.allowFrom }}", "--slave=yes", "--dnsupdate={{ .Values.pdns.dnsupdate.enabled }}"]
+          args: ["--api-key=$(PDNS_API_KEY)", "--webserver-allow-from={{ .Values.pdns.recursor.webserver.allowFrom }}"]
           env:
             - name: MYSQL_HOST
               value: {{ template "mariadb.fullname" . }}
@@ -43,6 +43,11 @@ spec:
                   key: mariadb-password
             - name: MYSQL_DB
               value: {{ .Values.mariadb.db.name | quote }}
+            - name: PDNS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "fullname" . }}
+                  key: api-key
           ports:
             - name: dns-udp
               containerPort: 53
