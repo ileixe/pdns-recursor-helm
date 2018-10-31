@@ -1,0 +1,22 @@
+{{- if .Values.pdns.recursor.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  {{- if .Values.pdns.recursor.persistence.storageClass }}
+  storageClassName: {{ .Values.pdns.recursor.persistence.storageClass }}
+  {{- end }}
+  accessModes:
+  {{- range .Values.pdns.recursor.persistence.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.pdns.recursor.persistence.size | quote }}
+{{- end }}
