@@ -1,18 +1,31 @@
-# Default values for pdns.
+# Default values for pdns-recursor-helm.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 pdns:
   api:
+    # key: secret key used to access the API and webserver
+    # API authentication is done through X-API-Key header
+    # if not specified it will randomly set
     key: PowerDNSAPI
   recursor:
     webserver:
+      # allowFrom:
+      # set of CIDRs allowed to access the webserver/api resource
       allowFrom: 0.0.0.0/0
     persistence:
       enabled: true
-      storageClass: "managed-nfs-storage"
+      # storageClass: (optional)
+      # indicates the storage class used to create the config volume for API created zones
+      # storageClass: "managed-nfs-storage"
       accessModes: [ReadWriteOnce]
-      size: 500Mi
+      size: 10Mi
+    # config
+    # this are the contents of the recursor.conf file.
+    # forward-zones-recurse: specifies the DNS servers used to resolve unmanaged zones
+    # visit https://doc.powerdns.com/recursor/settings.html for more information
+    # NOTES: do not modify api-config-dir, include-dir or auth-zones values as they will
+    # break the config injection through configMap
     config: |-
       daemon=no
       local-address=0.0.0.0
@@ -25,7 +38,16 @@ pdns:
       webserver-port=8081
       webserver-address=0.0.0.0
       api-config-dir=/data
-      trace=yes
+      include-dir=/zones
+      auth-zones=
+    # zones
+    # each entry specifies a DNS zone. use the config field to specify the contents of
+    # the DNS entries
+    zones:
+    - name: example.com.
+      config: |-
+        example.com  IN      SOA     local.zone.     hostmaster.example.com 1 1 1 1 1
+        subdomain  IN  A 192.168.1.1
 
 replicaCount: 1
 

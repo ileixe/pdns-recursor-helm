@@ -10,4 +10,9 @@ metadata:
 data:
   recursor.conf: |-
 {{ .Values.pdns.recursor.config | indent 4 }}
-
+{{- range .Values.pdns.recursor.zones }}
+  {{ printf "%s.zone" .name | quote }}: |-
+{{ .config | indent 4 }}
+  {{ printf "%s.conf" .name | quote }}: |-
+    auth-zones+={{ .name }}=/zones/{{ printf "%s.zone" .name }}
+{{- end}}

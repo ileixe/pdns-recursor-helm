@@ -24,6 +24,19 @@ spec:
         - name: config
           configMap:
             name: {{ template "fullname" . }}
+            items:
+              - key: recursor.conf
+                path: recursor.conf
+        - name: zones
+          configMap:
+            name: {{ template "fullname" . }}
+            items:
+              {{- range .Values.pdns.recursor.zones }}
+              - key: {{ .name }}.conf
+                path: {{ .name }}.conf
+              - key: {{ .name }}.zone
+                path: {{ .name }}.zone
+              {{- end}}
         - name: api-data
           {{- if .Values.pdns.recursor.persistence.enabled }}
           persistentVolumeClaim:
@@ -55,8 +68,9 @@ spec:
               protocol: TCP
           volumeMounts:
           - name: config
-            mountPath: /etc/pdns/recursor.conf
-            subPath: recursor.conf
+            mountPath: /etc/pdns
+          - name: zones
+            mountPath: /zones
           - name: api-data
             mountPath: /data
           livenessProbe:
