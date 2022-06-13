@@ -10,10 +10,6 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: 8081
-      targetPort: 8081
-      protocol: TCP
-      name: api
     - port: 53
       targetPort: 53
       protocol: UDP
@@ -23,5 +19,5 @@ spec:
       protocol: TCP
       name: dns-tcp
   selector:
-    app: {{ template "fullname" . }}
+    app: {{ include "pdns-recursor-helm.fullname" . }}
     release: {{ .Release.Name }}

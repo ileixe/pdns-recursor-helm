@@ -1,6 +1,6 @@
 # Default values for pdns-recursor-helm.
 # This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Declare variables to be passed into your includes.
 
 pdns:
   api:
@@ -26,19 +26,19 @@ pdns:
     # visit https://doc.powerdns.com/recursor/settings.html for more information
     # NOTES: do not modify api-config-dir, include-dir or auth-zones values as they will
     # break the config injection through configMap
+    # TODO(ileixe): delete 10.0.0.1 as a DNS server
     config: |-
       daemon=no
-      local-address=0.0.0.0
+      local-address=10.0.0.2
       local-port=53
       allow-from=0.0.0.0/0
       setgid=recursor
       setuid=recursor
-      forward-zones-recurse=.=1.1.1.1;8.8.8.8
-      webserver=yes
-      webserver-port=8081
-      webserver-address=0.0.0.0
+      forward-zones=furiosa.cloud=10.106.147.51
+      forward-zones-recurse=.=10.0.0.1;1.1.1.1;8.8.8.8
       api-config-dir=/data
       include-dir=/zones
+      max-cache-ttl=600
       auth-zones=
     # zones
     # each entry specifies a DNS zone. use the config field to specify the contents of
